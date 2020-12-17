@@ -1,0 +1,11 @@
+# to create cm = configmap
+kubectl create cm variables --from-file=variables
+
+# to describe the cm "variables"
+kubectl describe cm variables
+
+# creating using -o yaml
+kubectl create cm variables --from-file=variables -o yaml --dry-run > variable.yml
+
+# create configmap from literal
+kubectl create cm morevars --from-literal=VAR3=red --from-literal-VAR4=blue
