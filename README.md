@@ -7,12 +7,14 @@ Available Solution in this repos:
 
 ## Installation
 
+Clone this repo as usual
 ```python
 git clone ...
 ```
-Copy the .vimrc to your home dir
+Install vim editor and copy the .vimrc to your home dir. This will help you for the YAML indentation
 
 ```python
+yum install -y vim
 cp .vimrc ~/.vimrc
 ```
 
