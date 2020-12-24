@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: echoserver
+spec:
+  rules:
+  - host:  ingress.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: httpd
+          servicePort: 8080
+        path: /
