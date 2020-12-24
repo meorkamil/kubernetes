@@ -6,7 +6,7 @@ metadata:
   name: echoserver
 spec:
   rules:
-  - host:  ingress.httpd.com
+  - host: ingress.httpd.com
     http:
       paths:
       - backend:
@@ -16,7 +16,7 @@ spec:
   - host: ingress.nginx.com
     http:
       paths:
-        - path: /*
+        - path: /
           backend:
             serviceName: nginx
             servicePort: 80
