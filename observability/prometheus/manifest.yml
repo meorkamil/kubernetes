@@ -24,11 +24,18 @@ spec:
       labels:
         app: prometheus
     spec:
+      volumes:
+        - name: prom-config
+          configMap:
+            name: prom-config 
       containers:
         - name: prometheus
           image: prom/prometheus:v3.11.3
           ports:
             - containerPort: 9090
+          volumeMounts:
+            - name: prom-config
+              mountPath: /etc/prometheus
 
 ---
 # Service (ClusterIP — Traefik routes to this)
