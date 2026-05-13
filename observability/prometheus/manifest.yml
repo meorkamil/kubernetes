@@ -1,0 +1,62 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability
+
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: observability
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v3.11.3
+          ports:
+            - containerPort: 9090
+
+---
+# Service (ClusterIP — Traefik routes to this)
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: observability
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - port: 9090
+      targetPort: 9090
+
+---
+# IngressRoute
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus
+  namespace: observability
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`prometheus.192.168.0.30.nip.io`)
+      kind: Rule
+      services:
+        - name: prometheus
+          port: 9090
