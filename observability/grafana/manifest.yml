@@ -1,0 +1,62 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability
+
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: observability
+  labels:
+    app: grafan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:12.4.3
+          ports:
+            - containerPort: 3000
+
+---
+# Service (ClusterIP — Traefik routes to this)
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: observability
+spec:
+  selector:
+    app: grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
+
+---
+# IngressRoute
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana
+  namespace: observability
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`grafana.192.168.0.30.nip.io`)
+      kind: Rule
+      services:
+        - name: grafana
+          port: 3000
