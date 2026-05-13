@@ -13,7 +13,7 @@ metadata:
   name: grafana
   namespace: observability
   labels:
-    app: grafan
+    app: grafana
 spec:
   replicas: 1
   selector:

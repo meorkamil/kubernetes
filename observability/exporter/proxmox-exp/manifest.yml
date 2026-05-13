@@ -1,0 +1,69 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability
+
+---
+# ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pve-exp-config
+  namespace: observability
+data:
+  pve.yml: |
+    default:
+      user: xx
+      password: xx
+      verify_ssl: false
+
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pve-exp
+  namespace: observability
+  labels:
+    app: pve-exp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pve-exp
+  template:
+    metadata:
+      labels:
+        app: pve-exp
+    spec:
+      volumes:
+        - name: pve-exp-config
+          configMap:
+            name: pve-exp-config 
+      containers:
+        - name: pve-exp
+          image: prompve/prometheus-pve-exporter 
+          ports:
+            - containerPort: 9221
+          volumeMounts:
+            - name: pve-exp-config
+              mountPath: /etc/prometheus
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pve-exp
+  namespace: observability
+  labels:
+    app: pve-exp
+spec:
+  selector:
+    app: pve-exp
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 9221
+      targetPort: 9221
